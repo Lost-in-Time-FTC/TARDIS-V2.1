@@ -12,12 +12,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name = "LiT Drive Program 2022-2023", group = "Linear OpMode")
 
 public class LiTDrive extends LinearOpMode {
-    final double LEFT_CLAW_OPEN = 0;
-    final double LEFT_CLAW_CLOSE = 1;
-    final double RIGHT_CLAW_OPEN = 1;
-    final double RIGHT_CLAW_CLOSE = 0;
-    final double CLAW_ROTATE_UP = 1;
-    final double CLAW_ROTATE_DOWN = 0;
+    final double LEFT_CLAW_OPEN = 1;
+    final double LEFT_CLAW_CLOSE = 0.5;
+    final double RIGHT_CLAW_OPEN = 0.5;
+    final double RIGHT_CLAW_CLOSE = 1;
+    final double CLAW_ROTATE_UP = 0;
+    final double CLAW_ROTATE_DOWN = 1;
 
     // Declare OpMode members
     private final ElapsedTime runtime = new ElapsedTime();

@@ -25,9 +25,9 @@ public class Hardware {
         backLeftMotor = hardwareMap.get(DcMotorEx.class, "backLeftMotor");
         rightClawServo = hardwareMap.get(Servo.class, "rightClawServo");
         leftClawServo = hardwareMap.get(Servo.class, "leftClawServo");
+        verticalServo = hardwareMap.get(Servo.class, "verticalServo");
         elevatorMotor = hardwareMap.get(DcMotorEx.class, "elevatorMotor");
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
-        verticalServo = hardwareMap.get(Servo.class, "verticalServo");
         climbMotor = hardwareMap.get(DcMotorEx.class, "climbingMotor");
 
         // Most robots need the motor on one side to be reversed to drive forward
