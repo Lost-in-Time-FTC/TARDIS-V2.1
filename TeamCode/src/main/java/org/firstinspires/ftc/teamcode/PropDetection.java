@@ -10,18 +10,18 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 public class PropDetection extends OpenCvPipeline {
     /*
-    YELLOW  = Parking Left
-    CYAN    = Parking Middle
-    MAGENTA = Parking Right
+    YELLOW  = Parking Right
+    CYAN    = Parking Left
+    MAGENTA = Parking Center
     */
 
     // TOP_LEFT anchor point for the bounding box
     private static final Point SLEEVE_LEFT_TOP_LEFT_ANCHOR_POINT = new Point(0, 0);
-    private static final Point SLEEVE_CENTER_TOP_LEFT_ANCHOR_POINT = new Point(107, 0);
-    private static final Point SLEEVE_RIGHT_TOP_LEFT_ANCHOR_POINT = new Point((106*2)+2, 0);
+    private static final Point SLEEVE_CENTER_TOP_LEFT_ANCHOR_POINT = new Point(106.666666666, 0);
+    private static final Point SLEEVE_RIGHT_TOP_LEFT_ANCHOR_POINT = new Point(213.333333333, 0);
 
     // Width and height for the bounding boxes
-    public static int REGION_WIDTH = 106;
+    public static double REGION_WIDTH = 106.666666666;
     public static int REGION_HEIGHT = 240;
     // Color definitions
     private final Scalar
@@ -64,24 +64,28 @@ public class PropDetection extends OpenCvPipeline {
         Scalar centerSumColors = Core.sumElems(centerAreaMat);
 
         // Get the minimum RGB value from every single channel
-        double centerMinColor = Math.min(centerSumColors.val[0], Math.min(centerSumColors.val[1], centerSumColors.val[2]));
+        double centerMaxColor = Math.max(centerSumColors.val[0], Math.max(centerSumColors.val[1], centerSumColors.val[2]));
 
         // Get the submat frame, and then sum all the values
         Mat leftAreaMat = input.submat(new Rect(sleeve_left_point_A, sleeve_left_point_B));
         Scalar leftSumColors = Core.sumElems(leftAreaMat);
 
         // Get the minimum RGB value from every single channel
-        double leftMinColor = Math.min(leftSumColors.val[0], Math.min(leftSumColors.val[1], leftSumColors.val[2]));
+        double leftMaxColor = Math.max(leftSumColors.val[0], Math.max(leftSumColors.val[1], leftSumColors.val[2]));
 
         // Get the submat frame, and then sum all the values
         Mat rightAreaMat = input.submat(new Rect(sleeve_right_point_A, sleeve_right_point_B));
         Scalar rightSumColors = Core.sumElems(rightAreaMat);
 
         // Get the minimum RGB value from every single channel
-        double rightMinColor = Math.min(rightSumColors.val[0], Math.min(rightSumColors.val[1], rightSumColors.val[2]));
+        double rightMaxColor = Math.max(rightSumColors.val[0], Math.max(rightSumColors.val[1], rightSumColors.val[2]));
+
+        double leftBoundRGB = leftSumColors.val[0] - leftSumColors.val[1] - leftSumColors.val[2];
+        double centerBoundRGB = centerSumColors.val[0] - centerSumColors.val[1] - centerSumColors.val[2];
+        double rightBoundRGB = rightSumColors.val[0] - rightSumColors.val[1] - rightSumColors.val[2];
 
         // Change the bounding box color based on the sleeve color
-//        if (centerSumColors.val[0] == centerMinColor) {
+//        if (centerSumColors.val[0] == centerMaxColor) {
 //            position = ParkingPosition.CENTER;
 //            Imgproc.rectangle(
 //                    input,
@@ -91,17 +95,17 @@ public class PropDetection extends OpenCvPipeline {
 //                    2
 //            );
 //        } else
-        if (centerSumColors.val[1] == centerMinColor) {
-            position = ParkingPosition.CENTER;
+        if (leftBoundRGB > centerBoundRGB && leftBoundRGB > rightBoundRGB) {
+            position = ParkingPosition.LEFT;
             Imgproc.rectangle(
                     input,
                     sleeve_center_point_A,
                     sleeve_center_point_B,
-                    MAGENTA,
+                    CYAN,
                     2
             );
-        } else if (leftSumColors.val[1] == leftMinColor) {
-            position = ParkingPosition.LEFT;
+        } else if (centerBoundRGB > leftBoundRGB && centerBoundRGB > rightBoundRGB) {
+            position = ParkingPosition.CENTER;
             Imgproc.rectangle(
                     input,
                     sleeve_left_point_A,
@@ -109,13 +113,13 @@ public class PropDetection extends OpenCvPipeline {
                     MAGENTA,
                     2
             );
-        } else if (rightSumColors.val[1] == rightMinColor) {
-            position = ParkingPosition.LEFT;
+        } else if (rightBoundRGB > leftBoundRGB && rightBoundRGB > centerBoundRGB) {
+            position = ParkingPosition.RIGHT;
             Imgproc.rectangle(
                     input,
                     sleeve_right_point_A,
                     sleeve_right_point_B,
-                    MAGENTA,
+                    YELLOW,
                     2
             );
         } else {
