@@ -18,7 +18,7 @@ public class PropBlobAutonomousImpl extends PropBlobAutonomousABC {
         // Store detected parking position
         PropBlobDetection.PropBlobPosition position = propBlobDetection.getPosition();
 
-        // Pick up preloaded cone and adjust arm position
+        // Pick up preloaded pixels and adjust arm position
         hardware.closeClaw();
         sleep(300);
 
@@ -37,238 +37,9 @@ public class PropBlobAutonomousImpl extends PropBlobAutonomousABC {
 
         hardware.armMotor.setPower(0);
 
-        // Go forward
-        setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setAllWheelMotorTargetPosition(2300);
-        setAllWheelMotorPower(0.6);
-        setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        while (hardware.frontRightMotor.isBusy() || hardware.frontLeftMotor.isBusy() || hardware.backRightMotor.isBusy() || hardware.backLeftMotor.isBusy()) {
-            hardware.elevatorMotor.setPower(0.7);
-            sleep(1500);
-            hardware.elevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            hardware.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        }
 
-        hardware.elevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        hardware.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // Rotate right
-        setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rotateRight(850);
-        setAllWheelMotorPower(0.25);
-        setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-        trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
-        setAllWheelMotorPower(0);
-
-        // Strafe left
-        setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        strafeLeft(375);
-        setAllWheelMotorPower(0.25);
-        setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-        trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
-        setAllWheelMotorPower(0);
-
-        // Go forward/line up with junction
-        setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setAllWheelMotorTargetPosition(150);
-        setAllWheelMotorPower(0.5);
-        setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-        trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
-        setAllWheelMotorPower(0);
-
-        // Arm cycle starts
-        hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_LOW_TOLERANCE);
-        hardware.armMotor.setTargetPosition(-400);
-        hardware.armMotor.setPower(ARM_PIVOT_SPEED);
-        hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        while (hardware.armMotor.isBusy()) {
-            telemetry.addData("moving", "moving");
-            telemetry.update();
-        }
-
-        hardware.armMotor.setPower(0);
-
-//        hardware.clawServo.setPosition(CLAW_WIDE_OPEN);
-        hardware.openClaw();
-        sleep(250);
-//        hardware.clawServo.setPosition(CLAW_OPEN);
-
-        // Move down for the first cycle
-        hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_LOW_TOLERANCE);
-        hardware.armMotor.setTargetPosition(1825); // Probably correct?
-        hardware.armMotor.setPower(1);
-        hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        while (hardware.armMotor.isBusy()) {
-            hardware.verticalServo.setPosition(CLAW_ROTATE_DOWN);
-        }
-
-        hardware.closeClaw();
-        sleep(400);
-
-        hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_HIGH_TOLERANCE);
-        hardware.armMotor.setTargetPosition(-1900);
-        hardware.armMotor.setPower(1);
-        sleep(200);
-        hardware.armMotor.setPower(0);
-        hardware.armMotor.setPower(ARM_PIVOT_SPEED);
-        hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        while (hardware.armMotor.isBusy()) {
-            sleep(250);
-            hardware.verticalServo.setPosition(CLAW_ROTATE_UP);
-        }
-
-        hardware.openClaw();
-        sleep(250);
-//        hardware.clawServo.setPosition(CLAW_OPEN);
-
-        // move down for 3rd cone
-        hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.armMotor.setTargetPositionTolerance(50);
-        hardware.armMotor.setTargetPosition(1950);
-        hardware.armMotor.setPower(ARM_PIVOT_SPEED_DOWN);
-        hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        while (hardware.armMotor.isBusy()) {
-            sleep(250);
-            hardware.verticalServo.setPosition(CLAW_ROTATE_DOWN);
-        }
-
-        hardware.closeClaw();
-        sleep(400);
-
-        hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_HIGH_TOLERANCE);
-        hardware.armMotor.setTargetPosition(-1900);
-        hardware.armMotor.setPower(1);
-        sleep(200);
-        hardware.armMotor.setPower(0);
-        hardware.armMotor.setPower(ARM_PIVOT_SPEED);
-        hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        while (hardware.armMotor.isBusy()) {
-            sleep(250);
-            hardware.verticalServo.setPosition(CLAW_ROTATE_UP);
-        }
-
-        hardware.openClaw();
-        sleep(250);
-//        hardware.clawServo.setPosition(CLAW_OPEN);
-
-        // move down for 4th cone
-        hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_LOW_TOLERANCE);
-        hardware.armMotor.setTargetPosition(2050);
-        hardware.armMotor.setPower(ARM_PIVOT_SPEED_DOWN);
-        hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        while (hardware.armMotor.isBusy()) {
-            sleep(250);
-            hardware.verticalServo.setPosition(CLAW_ROTATE_DOWN);
-        }
-
-        hardware.closeClaw();
-        sleep(400);
-
-        hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_HIGH_TOLERANCE);
-        hardware.armMotor.setTargetPosition(-2000);
-        hardware.armMotor.setPower(1);
-        sleep(200);
-        hardware.armMotor.setPower(0);
-        hardware.armMotor.setPower(ARM_PIVOT_SPEED);
-        hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        while (hardware.armMotor.isBusy()) {
-            sleep(250);
-            hardware.verticalServo.setPosition(CLAW_ROTATE_UP);
-        }
-
-        hardware.openClaw();
-        sleep(250);
-//        hardware.clawServo.setPosition(CLAW_OPEN);
-
-        // move down for 5th cone
-        hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_LOW_TOLERANCE);
-        hardware.armMotor.setTargetPosition(2150);
-        hardware.armMotor.setPower(ARM_PIVOT_SPEED_DOWN);
-        hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        while (hardware.armMotor.isBusy()) {
-            sleep(250);
-            hardware.verticalServo.setPosition(CLAW_ROTATE_DOWN);
-        }
-
-        hardware.closeClaw();
-        sleep(400);
-
-        hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_HIGH_TOLERANCE);
-        hardware.armMotor.setTargetPosition(-2050);
-        hardware.armMotor.setPower(1);
-        sleep(200);
-        hardware.armMotor.setPower(0);
-        hardware.armMotor.setPower(ARM_PIVOT_SPEED);
-        hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        while (hardware.armMotor.isBusy()) {
-            sleep(250);
-            hardware.verticalServo.setPosition(CLAW_ROTATE_UP);
-        }
-
-//        hardware.clawServo.setPosition(CLAW_WIDE_OPEN);
-        hardware.openClaw();
-        sleep(250);
-//        hardware.clawServo.setPosition(CLAW_OPEN);
-
-        // Finish cycle
-        hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_LOW_TOLERANCE);
-        hardware.armMotor.setTargetPosition(500);
-        hardware.armMotor.setPower(ARM_PIVOT_SPEED);
-        hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        while (hardware.armMotor.isBusy()) {
-            hardware.openClaw();
-        }
-
-        hardware.elevatorMotor.setPower(-0.7);
-        sleep(1500);
-        hardware.elevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        hardware.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        // Go forward/line up with junction again
-        setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setAllWheelMotorTargetPosition(40);
-        setAllWheelMotorPower(0.5);
-        setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-        trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
-        setAllWheelMotorPower(0);
-
-        // Rotate left to park
-        setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rotateLeft(1100);
-        setAllWheelMotorPower(0.5);
-        setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-        trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
-        setAllWheelMotorPower(0);
-
-        // Move backwards in parking
-        setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setAllWheelMotorTargetPosition(-200);
-        setAllWheelMotorPower(0.5);
-        setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-        trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
-        setAllWheelMotorPower(0);
-
-        // The parking after the cycle
         if (position == PropBlobDetection.PropBlobPosition.LEFT) {
             telemetry.addData("left", "4324");
             // Strafe left
@@ -278,24 +49,275 @@ public class PropBlobAutonomousImpl extends PropBlobAutonomousABC {
             setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
             trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
             setAllWheelMotorPower(0);
-        } else if (position == PropBlobDetection.PropBlobPosition.CENTER) {
-            telemetry.addData("center", "4324");
-            // Strafe left slightly
+
+            // Go forward
             setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            strafeLeft(500);
+            setAllWheelMotorTargetPosition(2300);
+            setAllWheelMotorPower(0.6);
+            setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            while (hardware.frontRightMotor.isBusy() || hardware.frontLeftMotor.isBusy() || hardware.backRightMotor.isBusy() || hardware.backLeftMotor.isBusy()) {
+                hardware.elevatorMotor.setPower(0.7);
+                sleep(1500);
+                hardware.elevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                hardware.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            }
+
+            hardware.elevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            hardware.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            // Place first pixel
+            hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_LOW_TOLERANCE);
+            hardware.armMotor.setTargetPosition(-400);
+            hardware.armMotor.setPower(ARM_PIVOT_SPEED);
+            hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            while (hardware.armMotor.isBusy()) {
+                telemetry.addData("moving", "moving");
+                telemetry.update();
+            }
+
+            hardware.armMotor.setPower(0);
+
+            hardware.openClaw();
+            sleep(250);
+
+            // Move arm back up to place on the board
+            hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_LOW_TOLERANCE);
+            hardware.armMotor.setTargetPosition(1000);
+            hardware.armMotor.setPower(ARM_PIVOT_SPEED);
+            hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            while (hardware.armMotor.isBusy()) {
+                telemetry.addData("moving", "moving");
+                telemetry.update();
+
+                // Rotate left
+                setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rotateLeft(850);
+                setAllWheelMotorPower(0.25);
+                setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+                trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
+                setAllWheelMotorPower(0);
+
+                // Go forward to the board
+                setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                setAllWheelMotorTargetPosition(2300);
+                setAllWheelMotorPower(0.6);
+                setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
+
+            hardware.armMotor.setPower(0);
+
+            // Move arm down to place pixel on board
+            hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_LOW_TOLERANCE);
+            hardware.armMotor.setTargetPosition(-400);
+            hardware.armMotor.setPower(ARM_PIVOT_SPEED);
+            hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            while (hardware.armMotor.isBusy()) {
+                telemetry.addData("moving", "moving");
+                telemetry.update();
+            }
+
+            hardware.armMotor.setPower(0);
+
+            hardware.openClaw();
+            sleep(250);
+
+            // Strafe left to park
+            setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            strafeLeft(2000);
+            setAllWheelMotorPower(1);
+            setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+            trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
+            setAllWheelMotorPower(0);
+        } else if (position == PropBlobDetection.PropBlobPosition.CENTER) {
+            // Go forward
+            setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            setAllWheelMotorTargetPosition(2300);
+            setAllWheelMotorPower(0.6);
+            setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            while (hardware.frontRightMotor.isBusy() || hardware.frontLeftMotor.isBusy() || hardware.backRightMotor.isBusy() || hardware.backLeftMotor.isBusy()) {
+                hardware.elevatorMotor.setPower(0.7);
+                sleep(1500);
+                hardware.elevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                hardware.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            }
+
+            hardware.elevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            hardware.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            // Place first pixel
+            hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_LOW_TOLERANCE);
+            hardware.armMotor.setTargetPosition(-400);
+            hardware.armMotor.setPower(ARM_PIVOT_SPEED);
+            hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            while (hardware.armMotor.isBusy()) {
+                telemetry.addData("moving", "moving");
+                telemetry.update();
+            }
+
+            hardware.armMotor.setPower(0);
+
+            hardware.openClaw();
+            sleep(250);
+
+            // Move arm back up to place on the board
+            hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_LOW_TOLERANCE);
+            hardware.armMotor.setTargetPosition(1000);
+            hardware.armMotor.setPower(ARM_PIVOT_SPEED);
+            hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            while (hardware.armMotor.isBusy()) {
+                telemetry.addData("moving", "moving");
+                telemetry.update();
+
+                // Rotate left
+                setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rotateLeft(850);
+                setAllWheelMotorPower(0.25);
+                setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+                trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
+                setAllWheelMotorPower(0);
+
+                // Go forward to the board
+                setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                setAllWheelMotorTargetPosition(2300);
+                setAllWheelMotorPower(0.6);
+                setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
+
+            hardware.armMotor.setPower(0);
+
+            // Move arm down to place pixel on board
+            hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_LOW_TOLERANCE);
+            hardware.armMotor.setTargetPosition(-400);
+            hardware.armMotor.setPower(ARM_PIVOT_SPEED);
+            hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            while (hardware.armMotor.isBusy()) {
+                telemetry.addData("moving", "moving");
+                telemetry.update();
+            }
+
+            hardware.armMotor.setPower(0);
+
+            hardware.openClaw();
+            sleep(250);
+
+            // Strafe left more to park
+            setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            strafeLeft(2000);
             setAllWheelMotorPower(1);
             setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
             trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
             setAllWheelMotorPower(0);
         } else if (position == PropBlobDetection.PropBlobPosition.RIGHT) {
             telemetry.addData("right", "4324");
-            // Strafe right
+            // Rotate right
             setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            strafeRight(750);
+            rotateRight(750);
+            setAllWheelMotorPower(1);
+            setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+            trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
+            setAllWheelMotorPower(0);
+
+            // Go forward
+            setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            setAllWheelMotorTargetPosition(2300);
+            setAllWheelMotorPower(0.6);
+            setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            while (hardware.frontRightMotor.isBusy() || hardware.frontLeftMotor.isBusy() || hardware.backRightMotor.isBusy() || hardware.backLeftMotor.isBusy()) {
+                hardware.elevatorMotor.setPower(0.7);
+                sleep(1500);
+                hardware.elevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                hardware.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            }
+
+            hardware.elevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            hardware.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            // Place first pixel
+            hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_LOW_TOLERANCE);
+            hardware.armMotor.setTargetPosition(-400);
+            hardware.armMotor.setPower(ARM_PIVOT_SPEED);
+            hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            while (hardware.armMotor.isBusy()) {
+                telemetry.addData("moving", "moving");
+                telemetry.update();
+            }
+
+            hardware.armMotor.setPower(0);
+
+            hardware.openClaw();
+            sleep(250);
+
+            // Move arm back up to place on the board
+            hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_LOW_TOLERANCE);
+            hardware.armMotor.setTargetPosition(1000);
+            hardware.armMotor.setPower(ARM_PIVOT_SPEED);
+            hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            while (hardware.armMotor.isBusy()) {
+                telemetry.addData("moving", "moving");
+                telemetry.update();
+
+                // Rotate left
+                setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rotateLeft(1200);
+                setAllWheelMotorPower(0.25);
+                setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+                trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
+                setAllWheelMotorPower(0);
+
+                // Go forward to the board
+                setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                setAllWheelMotorTargetPosition(2300);
+                setAllWheelMotorPower(0.6);
+                setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
+
+            hardware.armMotor.setPower(0);
+
+            // Move arm down to place pixel on board
+            hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_LOW_TOLERANCE);
+            hardware.armMotor.setTargetPosition(-400);
+            hardware.armMotor.setPower(ARM_PIVOT_SPEED);
+            hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            while (hardware.armMotor.isBusy()) {
+                telemetry.addData("moving", "moving");
+                telemetry.update();
+            }
+
+            hardware.armMotor.setPower(0);
+
+            hardware.openClaw();
+            sleep(250);
+
+            // Strafe right to park
+            setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            strafeRight(2000);
             setAllWheelMotorPower(1);
             setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
             trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
             setAllWheelMotorPower(0);
         }
+
+        // KUSHAL LOOK AT THIS!!!!!!!!!!!!!!! NEED TO CHANGE THE VALUES AND FIX THE MOVEMENTS
     }
 }

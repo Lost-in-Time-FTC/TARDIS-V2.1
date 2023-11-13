@@ -23,7 +23,6 @@ public class LiTDrive extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     //    TouchSensor touchSensor;
     boolean clawToggle = false;
-    boolean rotateToggle = false;
     double armPivotSpeed = 0.85;
     private Hardware hardware = null;
     public void runOpMode() {
@@ -47,7 +46,6 @@ public class LiTDrive extends LinearOpMode {
         while (opModeIsActive()) {
             toggle(currentGamepad2, previousGamepad2);
             claw();
-            rotateClaw();
             drive();
             elevator();
             armPivot();
@@ -66,9 +64,6 @@ public class LiTDrive extends LinearOpMode {
         if (currentGamepad2.a && !previousGamepad2.a) {
             clawToggle = !clawToggle;
         }
-        if (currentGamepad2.b && !previousGamepad2.b) {
-            rotateToggle = !rotateToggle;
-        }
     }
 
     public void claw() {
@@ -80,16 +75,11 @@ public class LiTDrive extends LinearOpMode {
              hardware.leftClawServo.setPosition(LEFT_CLAW_OPEN);
         }
 
-//        if (touchSensor.isPressed()) {
-//            clawServo.setPosition(CLAW_CLOSE);
-//        }
-    }
-
-    public void rotateClaw() {
-        if (rotateToggle) {
-             hardware.verticalServo.setPosition(CLAW_ROTATE_UP);
-        } else {
-             hardware.verticalServo.setPosition(CLAW_ROTATE_DOWN);
+        if (gamepad2.left_trigger > 0.25) {
+            hardware.verticalServo.setPosition(hardware.verticalServo.getPosition()-0.01);
+        }
+        if (gamepad2.right_trigger > 0.25) {
+            hardware.verticalServo.setPosition(hardware.verticalServo.getPosition()+0.01);
         }
     }
 
