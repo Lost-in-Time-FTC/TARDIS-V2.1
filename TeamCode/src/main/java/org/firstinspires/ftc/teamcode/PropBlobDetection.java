@@ -2,15 +2,11 @@ package org.firstinspires.ftc.teamcode;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
-import org.opencv.features2d.Features2d;
-import org.opencv.features2d.SimpleBlobDetector;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
@@ -33,7 +29,7 @@ public class PropBlobDetection extends OpenCvPipeline {
             CYAN = new Scalar(0, 255, 255),
             MAGENTA = new Scalar(255, 0, 0);
     // Running variable storing the parking position
-    private volatile ParkingPosition position = ParkingPosition.LEFT;
+    private volatile PropBlobPosition position = PropBlobPosition.LEFT;
 
     @Override
     public Mat processFrame(Mat input) {
@@ -82,7 +78,7 @@ public class PropBlobDetection extends OpenCvPipeline {
         }
 
         if (maxAreaX < width / 3) {
-            position = ParkingPosition.LEFT;
+            position = PropBlobPosition.LEFT;
 //            Imgproc.rectangle(
 //                    mat,
 //                    sleeve_left_point_A,
@@ -91,7 +87,7 @@ public class PropBlobDetection extends OpenCvPipeline {
 //                    2
 //            );
         } else if (maxAreaX < width * 2 / 3){
-            position = ParkingPosition.CENTER;
+            position = PropBlobPosition.CENTER;
 //            Imgproc.rectangle(
 //                    mat,
 //                    sleeve_center_point_A,
@@ -100,7 +96,7 @@ public class PropBlobDetection extends OpenCvPipeline {
 //                    2
 //            );
         } else {
-            position = ParkingPosition.RIGHT;
+            position = PropBlobPosition.RIGHT;
 //            Imgproc.rectangle(
 //                    mat,
 //                    sleeve_right_point_A,
@@ -112,15 +108,14 @@ public class PropBlobDetection extends OpenCvPipeline {
         return mat;
     }
 
-    // Returns an enum being the current position where the robot will park
-    public ParkingPosition getPosition() {
-        return position;
-    }
-
-    public enum ParkingPosition {
+    public enum PropBlobPosition {
         LEFT,
         CENTER,
         RIGHT,
-        UNDETECTED
+    }
+
+    // Returns an enum being the current position where the robot will park
+    public PropBlobPosition getPosition() {
+        return position;
     }
 }

@@ -17,6 +17,12 @@ public class Hardware {
     public DcMotorEx elevatorMotor;
     public DcMotorEx armMotor;
     public DcMotorEx climbMotor;
+    final double LEFT_CLAW_OPEN = 0;
+    final double LEFT_CLAW_CLOSE = 1;
+    final double RIGHT_CLAW_OPEN = 1;
+    final double RIGHT_CLAW_CLOSE = 0;
+    final double CLAW_ROTATE_UP = 1;
+    final double CLAW_ROTATE_DOWN = 0;
 
     public Hardware(HardwareMap hardwareMap) {
         frontRightMotor = hardwareMap.get(DcMotorEx.class, "frontRightMotor");
@@ -38,6 +44,16 @@ public class Hardware {
         frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
         armMotor.setDirection(DcMotor.Direction.REVERSE);
         elevatorMotor.setDirection(DcMotor.Direction.FORWARD);
+    }
+
+    public void closeClaw() {
+        rightClawServo.setPosition(RIGHT_CLAW_CLOSE);
+        leftClawServo.setPosition(LEFT_CLAW_CLOSE);
+    }
+
+    public void openClaw() {
+        rightClawServo.setPosition(RIGHT_CLAW_OPEN);
+        leftClawServo.setPosition(LEFT_CLAW_OPEN);
     }
 
     public void driveForwardTime(double power, int time) throws InterruptedException {
