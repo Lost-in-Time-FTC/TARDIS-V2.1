@@ -76,10 +76,10 @@ public class LiTDrive extends LinearOpMode {
         }
 
         if (gamepad2.left_trigger > 0.25) {
-            hardware.verticalServo.setPosition(hardware.verticalServo.getPosition()-0.01);
+            hardware.verticalServo.setPosition(hardware.verticalServo.getPosition()-0.001);
         }
         if (gamepad2.right_trigger > 0.25) {
-            hardware.verticalServo.setPosition(hardware.verticalServo.getPosition()+0.01);
+            hardware.verticalServo.setPosition(hardware.verticalServo.getPosition()+0.001);
         }
     }
 
