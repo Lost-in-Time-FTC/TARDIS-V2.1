@@ -35,14 +35,14 @@ public abstract class PropBlobAutonomousABC extends LinearOpMode {
     public PropBlobDetection propBlobDetection;
     public OpenCvCamera camera;
 
-    public final void initHardware() {
+    public final void initHardware(String color) {
         // Generic hardware
         hardware = new Hardware(hardwareMap);
 
         // OpenCV camera
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId);
-        propBlobDetection = new PropBlobDetection();
+        propBlobDetection = new PropBlobDetection(color);
         camera.setPipeline(propBlobDetection);
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -118,7 +118,7 @@ public abstract class PropBlobAutonomousABC extends LinearOpMode {
         hardware.backRightMotor.setTargetPosition(position);
         hardware.frontLeftMotor.setTargetPosition(position);
         hardware.backLeftMotor.setTargetPosition(position);
-        setAllWheelMotorTargetPositionTolerance(30);
+//        setAllWheelMotorTargetPositionTolerance(30);
     }
 
     public final void setAllWheelMotorTargetPositionTolerance(int tolerance) {

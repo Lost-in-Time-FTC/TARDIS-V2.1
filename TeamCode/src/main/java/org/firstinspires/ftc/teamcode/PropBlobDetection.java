@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PropBlobDetection extends OpenCvPipeline {
+
     /*
     YELLOW  = Parking Right
     CYAN    = Parking Left
@@ -30,6 +31,18 @@ public class PropBlobDetection extends OpenCvPipeline {
             MAGENTA = new Scalar(255, 0, 0);
     // Running variable storing the parking position
     private volatile PropBlobPosition position = PropBlobPosition.LEFT;
+    private Scalar lowHSV;
+    private Scalar highHSV;
+
+    public PropBlobDetection(String color) {
+        if (color == "RED") {
+            lowHSV = new Scalar(0, 100, 100); // lower bound HSV for red
+            highHSV = new Scalar(40, 255, 255); // higher bound HSV for red
+        } else if (color == "BLUE") {
+            lowHSV = new Scalar(85, 100, 100); // lower bound HSV for blue
+            highHSV = new Scalar(125, 255, 255); // higher bound HSV for blue
+        }
+    }
 
     @Override
     public Mat processFrame(Mat input) {
@@ -38,8 +51,6 @@ public class PropBlobDetection extends OpenCvPipeline {
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
         // Threshold the image to get only red values
         // TODO: Tune the HSV values (red wraps around 180)
-        Scalar lowHSV = new Scalar(0, 100, 100); // lower bound HSV for red
-        Scalar highHSV = new Scalar(40, 255, 255); // higher bound HSV for red
         Mat thresh = new Mat();
         Core.inRange(mat, lowHSV, highHSV, thresh);
 
