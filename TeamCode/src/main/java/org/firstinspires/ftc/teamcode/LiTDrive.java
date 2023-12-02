@@ -41,8 +41,8 @@ public class LiTDrive extends LinearOpMode {
             drive();
             elevator();
             armPivot();
+//            drone();
         }
-
     }
 
     // toggling system
@@ -101,6 +101,7 @@ public class LiTDrive extends LinearOpMode {
         // hold position if there is no input
         else {
             hardware.elevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            hardware.elevatorMotor.setPower(0);
         }
     }
 
@@ -110,6 +111,17 @@ public class LiTDrive extends LinearOpMode {
         double armPower = -gamepad2.left_stick_y;
         hardware.armMotor.setPower(armPower * armPivotSpeed);
     }
+
+    // airplane
+//    public void drone() {
+//        if (gamepad1.dpad_left) {
+//            hardware.planeAngleServo.setPosition(0.4);
+//        }
+//
+//        if (gamepad1.dpad_right) {
+//            hardware.planeLaunchServo.setPosition(0);
+//        }
+//    }
 
     // drive code
     public void drive() {

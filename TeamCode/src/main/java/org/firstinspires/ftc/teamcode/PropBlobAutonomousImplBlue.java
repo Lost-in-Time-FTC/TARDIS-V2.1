@@ -53,7 +53,7 @@ public class PropBlobAutonomousImplBlue extends PropBlobAutonomousABC {
             telemetry.addData("right", "4324");
             // Go forward
             setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            setAllWheelMotorTargetPosition(870);
+            setAllWheelMotorTargetPosition(1420);
             setAllWheelMotorPower(0.6);
             setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
             trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
