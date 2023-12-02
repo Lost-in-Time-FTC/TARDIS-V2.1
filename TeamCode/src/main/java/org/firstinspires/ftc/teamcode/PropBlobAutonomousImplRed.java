@@ -44,11 +44,13 @@ public class PropBlobAutonomousImplRed extends PropBlobAutonomousABC {
             telemetry.addData("right", "4324");
             // Go forward
             setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            setAllWheelMotorTargetPosition(870);
+            setAllWheelMotorTargetPosition(1320);
             setAllWheelMotorPower(0.6);
             setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
             trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
             setAllWheelMotorPower(0);
+            hardware.verticalServo.setPosition(0.5);
+            hardware.rightClawServo.setPosition(1);
         } else if (position == PropBlobDetection.PropBlobPosition.RIGHT) {
             telemetry.addData("right", "4324");
             hardware.rightClawServo.setPosition(0);

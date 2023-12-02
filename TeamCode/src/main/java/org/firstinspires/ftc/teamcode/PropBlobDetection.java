@@ -39,8 +39,8 @@ public class PropBlobDetection extends OpenCvPipeline {
             lowHSV = new Scalar(0, 100, 100); // lower bound HSV for red
             highHSV = new Scalar(40, 255, 255); // higher bound HSV for red
         } else if (color == "BLUE") {
-            lowHSV = new Scalar(85, 100, 100); // lower bound HSV for blue
-            highHSV = new Scalar(125, 255, 255); // higher bound HSV for blue
+            lowHSV = new Scalar(90, 100, 100); // lower bound HSV for blue
+            highHSV = new Scalar(145, 255, 255); // higher bound HSV for blue
         }
     }
 
@@ -55,12 +55,12 @@ public class PropBlobDetection extends OpenCvPipeline {
         Core.inRange(mat, lowHSV, highHSV, thresh);
 
         // blur image?
-        Mat blur = new Mat();
-        Imgproc.GaussianBlur(thresh, blur, new Size(3, 3), 0, 0);
+        //Mat blur = new Mat();
+        //Imgproc.GaussianBlur(thresh, blur, new Size(3, 3), 0, 0);
 
         // Run edge detector
         Mat edges = new Mat();
-        Imgproc.Canny(blur, edges, 100, 300);
+        Imgproc.Canny(thresh, edges, 100, 300);
 
         // Find contours?
         List<MatOfPoint> contours = new ArrayList<>();
