@@ -12,18 +12,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name = "LiT Drive Program 2022-2023", group = "Linear OpMode")
 
 public class LiTDrive extends LinearOpMode {
-    final double LEFT_CLAW_OPEN = 0;
-    final double LEFT_CLAW_CLOSE = 1;
-    final double RIGHT_CLAW_OPEN = 1;
-    final double RIGHT_CLAW_CLOSE = 0;
-    final double CLAW_ROTATE_UP = 1;
-    final double CLAW_ROTATE_DOWN = 0;
 
     // Declare OpMode members
     private final ElapsedTime runtime = new ElapsedTime();
-    //    TouchSensor touchSensor;
     boolean clawToggle = false;
-    double armPivotSpeed = 0.85;
     private Hardware hardware = null;
     public void runOpMode() {
         Gamepad currentGamepad2 = new Gamepad();
@@ -53,12 +45,15 @@ public class LiTDrive extends LinearOpMode {
 
     }
 
+    // toggling system
     public void toggle(Gamepad currentGamepad2, Gamepad previousGamepad2) {
         try {
             previousGamepad2.copy(currentGamepad2);
             currentGamepad2.copy(gamepad2);
-        } catch (Exception e) {
-            // e.printStackTrace();
+        }
+
+        catch (Exception e) {
+            // :)
         }
 
         if (currentGamepad2.a && !previousGamepad2.a) {
@@ -66,7 +61,15 @@ public class LiTDrive extends LinearOpMode {
         }
     }
 
+    // control everything on the claw: pincers + flipping
     public void claw() {
+
+        // variables for fun
+        final double LEFT_CLAW_OPEN = 0;
+        final double LEFT_CLAW_CLOSE = 1;
+        final double RIGHT_CLAW_OPEN = 1;
+        final double RIGHT_CLAW_CLOSE = 0;
+
         if (clawToggle) {
              hardware.rightClawServo.setPosition(RIGHT_CLAW_CLOSE);
              hardware.leftClawServo.setPosition(LEFT_CLAW_CLOSE);
@@ -83,30 +86,56 @@ public class LiTDrive extends LinearOpMode {
         }
     }
 
+    // control arm extension
+    public void elevator() {
+        // down
+        if (gamepad2.right_stick_y > 0.25) {
+            hardware.elevatorMotor.setPower(-0.45);
+        }
+
+        // up
+        else if (gamepad2.right_stick_y < -0.25) {
+            hardware.elevatorMotor.setPower(0.45);
+        }
+
+        // hold position if there is no input
+        else {
+            hardware.elevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+    }
+
+    // control arm's circular motion
+    public void armPivot() {
+        double armPivotSpeed = 0.85;
+        double armPower = -gamepad2.left_stick_y;
+        hardware.armMotor.setPower(armPower * armPivotSpeed);
+    }
+
+    // drive code
     public void drive() {
-        // Mecanum
+        // mecanum
         double drive = gamepad1.left_stick_y;
         double turn = -gamepad1.right_stick_x;
         double strafe = -gamepad1.left_stick_x;
 
-        // Strafing
+        // strafing
         double FL = Range.clip(drive + strafe + turn, -0.5, 0.5);
         double FR = Range.clip(drive - strafe - turn, -0.5, 0.5);
         double BL = Range.clip(drive - strafe + turn, -0.5, 0.5);
         double BR = Range.clip(drive + strafe - turn, -0.5, 0.5);
 
-        double QJSpeed = 1.75;
+        double driveSpeed = 1.75;
         double sniperPercent = 0.25;
 
-        // Sniper mode
+        // sniper mode = slower and more precise movement
         if (gamepad1.left_trigger > 0) {
-            hardware.frontLeftMotor.setPower(FL * QJSpeed * sniperPercent);
-            hardware.frontRightMotor.setPower(FR * QJSpeed * sniperPercent);
-            hardware.backLeftMotor.setPower(BL * QJSpeed * sniperPercent);
-            hardware.backRightMotor.setPower(BR * QJSpeed * sniperPercent);
+            hardware.frontLeftMotor.setPower(FL * driveSpeed * sniperPercent);
+            hardware.frontRightMotor.setPower(FR * driveSpeed * sniperPercent);
+            hardware.backLeftMotor.setPower(BL * driveSpeed * sniperPercent);
+            hardware.backRightMotor.setPower(BR * driveSpeed * sniperPercent);
         }
 
-        // Brakes
+        // brakes (doesn't really do anything, safety feature)
         else if (gamepad1.right_trigger > 0) {
             hardware.frontLeftMotor.setPower(FL * 0);
             hardware.frontRightMotor.setPower(FR * 0);
@@ -114,31 +143,13 @@ public class LiTDrive extends LinearOpMode {
             hardware.backRightMotor.setPower(BR * 0);
 
         }
-        // Normal drive
+
+        // drive normally
         else {
-            hardware.frontLeftMotor.setPower(FL * QJSpeed);
-            hardware.frontRightMotor.setPower(FR * QJSpeed);
-            hardware.backLeftMotor.setPower(BL * QJSpeed);
-            hardware.backRightMotor.setPower(BR * QJSpeed);
+            hardware.frontLeftMotor.setPower(FL * driveSpeed);
+            hardware.frontRightMotor.setPower(FR * driveSpeed);
+            hardware.backLeftMotor.setPower(BL * driveSpeed);
+            hardware.backRightMotor.setPower(BR * driveSpeed);
         }
     }
-
-    public void elevator() {
-        // Down
-        if (gamepad2.right_stick_y > 0.25) {
-            hardware.elevatorMotor.setPower(-0.45);
-        }
-        // Up
-        else if (gamepad2.right_stick_y < -0.25) {
-            hardware.elevatorMotor.setPower(0.45);
-        } else {
-            hardware.elevatorMotor.setPower(0);
-        }
-    }
-
-    public void armPivot() {
-        double armPower = -gamepad2.left_stick_y;
-        hardware.armMotor.setPower(armPower * armPivotSpeed);
-    }
-
 }
