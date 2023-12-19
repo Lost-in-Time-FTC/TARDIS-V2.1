@@ -16,6 +16,8 @@ public class LiTDrive extends LinearOpMode {
     // Declare OpMode members
     private final ElapsedTime runtime = new ElapsedTime();
     boolean clawToggle = false;
+    boolean rightClawToggle = false;
+    boolean leftClawToggle = false;
     private Hardware hardware = null;
     public void runOpMode() {
         Gamepad currentGamepad2 = new Gamepad();
@@ -41,7 +43,6 @@ public class LiTDrive extends LinearOpMode {
             drive();
             elevator();
             armPivot();
-//            drone();
         }
     }
 
@@ -59,23 +60,39 @@ public class LiTDrive extends LinearOpMode {
         if (currentGamepad2.a && !previousGamepad2.a) {
             clawToggle = !clawToggle;
         }
+        if (currentGamepad2.left_bumper && !previousGamepad2.left_bumper) {
+            leftClawToggle = !leftClawToggle;
+        }
+        if (currentGamepad2.right_bumper && !previousGamepad2.right_bumper) {
+            rightClawToggle = !rightClawToggle;
+        }
     }
 
     // control everything on the claw: pincers + flipping
     public void claw() {
 
         // variables for fun
-        final double LEFT_CLAW_OPEN = 0;
-        final double LEFT_CLAW_CLOSE = 1;
-        final double RIGHT_CLAW_OPEN = 1;
-        final double RIGHT_CLAW_CLOSE = 0;
+        final double LEFT_CLAW_OPEN = 1;
+        final double LEFT_CLAW_CLOSE = 0;
+        final double RIGHT_CLAW_OPEN = 0;
+        final double RIGHT_CLAW_CLOSE = 1;
 
-        if (clawToggle) {
-             hardware.rightClawServo.setPosition(RIGHT_CLAW_CLOSE);
-             hardware.leftClawServo.setPosition(LEFT_CLAW_CLOSE);
+        // open/close both claws at the same time for fast pickup/dropoff
+        if (gamepad2.a) {
+            hardware.rightClawServo.setPosition(RIGHT_CLAW_CLOSE);
+            hardware.leftClawServo.setPosition(LEFT_CLAW_CLOSE);
+        }
+
+        // open/close the claws individually for more precise placement
+        if (rightClawToggle) {
+            hardware.rightClawServo.setPosition(RIGHT_CLAW_CLOSE);
         } else {
-             hardware.rightClawServo.setPosition(RIGHT_CLAW_OPEN);
-             hardware.leftClawServo.setPosition(LEFT_CLAW_OPEN);
+            hardware.rightClawServo.setPosition(RIGHT_CLAW_OPEN);
+        }
+        if (leftClawToggle) {
+            hardware.leftClawServo.setPosition(LEFT_CLAW_CLOSE);
+        } else {
+            hardware.leftClawServo.setPosition(LEFT_CLAW_OPEN);
         }
 
         if (gamepad2.left_trigger > 0.25) {
@@ -108,7 +125,7 @@ public class LiTDrive extends LinearOpMode {
     // control arm's circular motion
     public void armPivot() {
         double armPivotSpeed = 0.85;
-        double armPower = -gamepad2.left_stick_y;
+        double armPower = gamepad2.left_stick_y;
         hardware.armMotor.setPower(armPower * armPivotSpeed);
     }
 
