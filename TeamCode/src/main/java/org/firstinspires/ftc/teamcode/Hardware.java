@@ -8,8 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @SuppressWarnings("unused")
 public class Hardware {
     public Servo verticalServo;
-//    public Servo planeAngleServo;
-//    public Servo planeLaunchServo;
+    public Servo planeLaunchServo;
     public DcMotorEx frontLeftMotor;
     public DcMotorEx frontRightMotor;
     public DcMotorEx backLeftMotor;
@@ -37,8 +36,7 @@ public class Hardware {
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
         verticalServo = hardwareMap.get(Servo.class, "verticalServo");
         climbMotor = hardwareMap.get(DcMotorEx.class, "climbingMotor");
-//        planeAngleServo = hardwareMap.get(Servo.class, "planeAngleServo");
-//        planeLaunchServo = hardwareMap.get(Servo.class, "planeLaunchServo");
+        planeLaunchServo = hardwareMap.get(Servo.class, "planeLaunchServo");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery

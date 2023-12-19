@@ -112,16 +112,12 @@ public class LiTDrive extends LinearOpMode {
         hardware.armMotor.setPower(armPower * armPivotSpeed);
     }
 
-    // airplane
-//    public void drone() {
-//        if (gamepad1.dpad_left) {
-//            hardware.planeAngleServo.setPosition(0.4);
-//        }
-//
-//        if (gamepad1.dpad_right) {
-//            hardware.planeLaunchServo.setPosition(0);
-//        }
-//    }
+//     airplane
+    public void drone() {
+        if (gamepad1.y) {
+            hardware.planeLaunchServo.setPosition(0);
+        }
+    }
 
     // drive code
     public void drive() {
