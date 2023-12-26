@@ -32,6 +32,7 @@ public class Hardware {
         backLeftMotor = hardwareMap.get(DcMotorEx.class, "backLeftMotor");
         rightClawServo = hardwareMap.get(Servo.class, "rightClawServo");
         leftClawServo = hardwareMap.get(Servo.class, "leftClawServo");
+        planeLaunchServo = hardwareMap.get(Servo.class, "planeLaunchServo");
         elevatorMotor = hardwareMap.get(DcMotorEx.class, "elevatorMotor");
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
         verticalServo = hardwareMap.get(Servo.class, "verticalServo");

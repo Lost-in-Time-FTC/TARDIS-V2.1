@@ -43,6 +43,7 @@ public class LiTDrive extends LinearOpMode {
             drive();
             elevator();
             armPivot();
+            airplane();
         }
     }
 
@@ -100,6 +101,15 @@ public class LiTDrive extends LinearOpMode {
         }
         if (gamepad2.right_trigger > 0.25) {
             hardware.verticalServo.setPosition(hardware.verticalServo.getPosition()+0.001);
+        }
+    }
+
+    // obvious
+    public void airplane() {
+        if (gamepad1.right_bumper) {
+            hardware.planeLaunchServo.setPosition(1);
+            sleep(2500);
+            hardware.planeLaunchServo.setPosition(0);
         }
     }
 

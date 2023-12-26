@@ -23,7 +23,7 @@ public class PropBlobAutonomousImplRed extends PropBlobAutonomousABC {
 
         // Pick up preloaded pixels and adjust arm position
         if (position == PropBlobDetection.PropBlobPosition.LEFT) {
-            telemetry.addData("left", "4324");
+            telemetry.addData("left red", "4324");
             // close both claws to hold pixels
             hardware.rightClawServo.setPosition(RIGHT_CLAW_CLOSE);
             hardware.leftClawServo.setPosition(LEFT_CLAW_CLOSE);
@@ -98,7 +98,7 @@ public class PropBlobAutonomousImplRed extends PropBlobAutonomousABC {
             hardware.elevatorMotor.setPower(0);
 
         } else if (position == PropBlobDetection.PropBlobPosition.CENTER) {
-            telemetry.addData("center", "4324");
+            telemetry.addData("center red", "4324");
             hardware.rightClawServo.setPosition(RIGHT_CLAW_CLOSE);
             hardware.leftClawServo.setPosition(LEFT_CLAW_CLOSE);
             // rotate claw downwards for more accurate placement, also pushes the prop out of the way
@@ -151,68 +151,39 @@ public class PropBlobAutonomousImplRed extends PropBlobAutonomousABC {
             hardware.elevatorMotor.setPower(0);
 
         } else if (position == PropBlobDetection.PropBlobPosition.RIGHT) {
-            telemetry.addData("right", "4324");
+            telemetry.addData("right red", "4324");
             // close both claws to hold pixels
             hardware.rightClawServo.setPosition(RIGHT_CLAW_CLOSE);
             hardware.leftClawServo.setPosition(LEFT_CLAW_CLOSE);
+            // rotate claw down for more accuracy
+            hardware.verticalServo.setPosition(0.725);
             // move forward
             setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            setAllWheelMotorTargetPosition(250);
+            setAllWheelMotorTargetPosition(1000);
             setAllWheelMotorPower(0.6);
             setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
             trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
             setAllWheelMotorPower(0);
             // strafe right to align with spikestrip
             setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            strafeRight(300);
+            strafeRight(500);
             setAllWheelMotorPower(0.25);
-            setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-            trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
-            setAllWheelMotorPower(0);
-            // move forward
-            setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            setAllWheelMotorTargetPosition(200);
-            setAllWheelMotorPower(0.6);
-            setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-            trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
-            setAllWheelMotorPower(0);
-            // rotate right to face board
-            setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            strafeRight(610);
-            setAllWheelMotorPower(0.25);
-            setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-            trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
-            setAllWheelMotorPower(0);
-            // move forward
-            setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            setAllWheelMotorTargetPosition(500);
-            setAllWheelMotorPower(0.6);
-            setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-            trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
-            setAllWheelMotorPower(0);
-            // strafe left to place on board
-            setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            strafeLeft(250);
-            setAllWheelMotorPower(0.25);
-            setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-            trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
-            setAllWheelMotorPower(0);
-            // rotate claw downwards for more accurate placement, also pushes the prop out of the way
-            hardware.verticalServo.setPosition(0.7);
-            sleep(1000);
-            // move forward to bring arm over the spikestrip
-            setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            setAllWheelMotorTargetPosition(550);
-            setAllWheelMotorPower(0.6);
             setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
             trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
             setAllWheelMotorPower(0);
             // release the pixel and let it fall for 2 seconds
-            hardware.leftClawServo.setPosition(LEFT_CLAW_OPEN);
+            hardware.rightClawServo.setPosition(RIGHT_CLAW_OPEN);
             sleep(2000);
+            // move backward to avoid pixel
+            setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            setAllWheelMotorTargetPosition(-350);
+            setAllWheelMotorPower(0.6);
+            setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+            trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
+            setAllWheelMotorPower(0);
             // rotate right to face board
             setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rotateRight(610);
+            rotateRight(1050);
             setAllWheelMotorPower(0.25);
             setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
             trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
@@ -220,14 +191,20 @@ public class PropBlobAutonomousImplRed extends PropBlobAutonomousABC {
             // rotate claw upwards to place onto board
             hardware.verticalServo.setPosition(0.275);
             sleep(1000);
-            // move forward to be infront of the board
+            // move forward
             setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            setAllWheelMotorTargetPosition(1500);
+            setAllWheelMotorTargetPosition(1250);
             setAllWheelMotorPower(0.6);
             setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
             trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
             setAllWheelMotorPower(0);
-
+            // strafe left a little bit
+            setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            strafeLeft(250);
+            setAllWheelMotorPower(0.6);
+            setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+            trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
+            setAllWheelMotorPower(0);
             // extend claw, drop pixel, retract
             hardware.elevatorMotor.setPower(-0.45);
             sleep(750);
