@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class PropBlobAutonomousImplBlue extends PropBlobAutonomousABC {
     @Override
     public void runOpMode() throws InterruptedException {
-        initHardware("BLUE");
+        initHardware(PropBlobDetection.AllianceColor.BLUE);
         trackTelemetryWhileNotIsStarted();
         waitForStart();
 

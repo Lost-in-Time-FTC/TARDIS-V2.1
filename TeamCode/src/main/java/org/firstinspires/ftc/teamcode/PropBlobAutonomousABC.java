@@ -35,7 +35,7 @@ public abstract class PropBlobAutonomousABC extends LinearOpMode {
     public PropBlobDetection propBlobDetection;
     public OpenCvCamera camera;
 
-    public final void initHardware(String color) {
+    public final void initHardware(PropBlobDetection.AllianceColor color) {
         // Generic hardware
         hardware = new Hardware(hardwareMap);
 

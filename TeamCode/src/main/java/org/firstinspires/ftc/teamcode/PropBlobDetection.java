@@ -34,11 +34,16 @@ public class PropBlobDetection extends OpenCvPipeline {
     private Scalar lowHSV;
     private Scalar highHSV;
 
-    public PropBlobDetection(String color) {
-        if (color == "RED") {
+    public enum AllianceColor {
+        RED,
+        BLUE
+    }
+
+    public PropBlobDetection(AllianceColor color) {
+        if (color == AllianceColor.RED) {
             lowHSV = new Scalar(0, 100, 100); // lower bound HSV for red
             highHSV = new Scalar(40, 255, 255); // higher bound HSV for red
-        } else if (color == "BLUE") {
+        } else if (color == AllianceColor.BLUE) {
             lowHSV = new Scalar(90, 100, 100); // lower bound HSV for blue
             highHSV = new Scalar(145, 255, 255); // higher bound HSV for blue
         }
