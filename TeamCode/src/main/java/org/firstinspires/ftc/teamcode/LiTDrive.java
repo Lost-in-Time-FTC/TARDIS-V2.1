@@ -184,10 +184,18 @@ public class LiTDrive extends LinearOpMode {
 
     // TODO: climb initial impl (UNTESTED)
     public void climb() {
-        if (gamepad1.left_bumper) {
-            hardware.climbMotor.setPower(-1);
+        if (gamepad1.dpad_up) {
+            hardware.climbMotor.setPower(-1); // retract to climb quickly while dpad up is held
         } else {
+            // brake and stay suspended in the air when dpad up is released
             hardware.climbMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            hardware.climbMotor.setPower(0); // TODO: Tweak depending if ZeroPowerBehavior.BRAKE actually works or not
+        }
+
+        // bring the robot down by extending slowly
+        if (!gamepad1.dpad_up && gamepad1.dpad_down) {
+            hardware.climbMotor.setPower(0.3);
+            sleep(3000); // TODO: Test if this timing is enough
             hardware.climbMotor.setPower(0);
         }
     }
