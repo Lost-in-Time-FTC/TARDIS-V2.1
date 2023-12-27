@@ -6,18 +6,22 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.hardware.Servo;
 
 @SuppressWarnings("unused")
 @TeleOp(name = "LiT Drive Program 2022-2023", group = "Linear OpMode")
 
 public class LiTDrive extends LinearOpMode {
+    enum ClawToggleTriState {
+        FALSE,
+        OPEN,
+        WIDE_OPEN
+    }
 
     // Declare OpMode members
     private final ElapsedTime runtime = new ElapsedTime();
     boolean clawToggle = false;
-    boolean rightClawToggle = false;
-    boolean leftClawToggle = false;
+    ClawToggleTriState rightClawToggle = ClawToggleTriState.FALSE;
+    ClawToggleTriState leftClawToggle = ClawToggleTriState.FALSE;
     private Hardware hardware = null;
     public void runOpMode() {
         Gamepad currentGamepad2 = new Gamepad();
@@ -44,6 +48,7 @@ public class LiTDrive extends LinearOpMode {
             elevator();
             armPivot();
             airplane();
+            climb();
         }
     }
 
@@ -52,20 +57,44 @@ public class LiTDrive extends LinearOpMode {
         try {
             previousGamepad2.copy(currentGamepad2);
             currentGamepad2.copy(gamepad2);
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             // :)
         }
 
         if (currentGamepad2.a && !previousGamepad2.a) {
             clawToggle = !clawToggle;
         }
+
         if (currentGamepad2.left_bumper && !previousGamepad2.left_bumper) {
-            leftClawToggle = !leftClawToggle;
+            switch (leftClawToggle) {
+                case OPEN:
+                    leftClawToggle = ClawToggleTriState.WIDE_OPEN;
+                    break;
+                case WIDE_OPEN:
+                    leftClawToggle = ClawToggleTriState.FALSE;
+                    break;
+                case FALSE:
+                    leftClawToggle = ClawToggleTriState.OPEN;
+                    break;
+            }
+
+//            leftClawToggle = !leftClawToggle;
         }
+
         if (currentGamepad2.right_bumper && !previousGamepad2.right_bumper) {
-            rightClawToggle = !rightClawToggle;
+            switch (rightClawToggle) {
+                case OPEN:
+                    rightClawToggle = ClawToggleTriState.WIDE_OPEN;
+                    break;
+                case WIDE_OPEN:
+                    rightClawToggle = ClawToggleTriState.FALSE;
+                    break;
+                case FALSE:
+                    rightClawToggle = ClawToggleTriState.OPEN;
+                    break;
+            }
+
+//            rightClawToggle = !rightClawToggle;
         }
     }
 
@@ -84,27 +113,41 @@ public class LiTDrive extends LinearOpMode {
             hardware.leftClawServo.setPosition(LEFT_CLAW_CLOSE);
         }
 
-        // open/close the claws individually for more precise placement
-        if (rightClawToggle) {
-            hardware.rightClawServo.setPosition(RIGHT_CLAW_CLOSE);
-        } else {
-            hardware.rightClawServo.setPosition(RIGHT_CLAW_OPEN);
+        // open/wide-open/close the claws individually for more precise placement
+        switch (rightClawToggle) {
+            case OPEN:
+                hardware.rightClawServo.setPosition(RIGHT_CLAW_OPEN);
+                break;
+            case WIDE_OPEN:
+                hardware.rightClawServo.setPosition(RIGHT_CLAW_CLOSE);
+                break;
+            case FALSE:
+                hardware.rightClawServo.setPosition(0.25);
+                break;
         }
-        if (leftClawToggle) {
-            hardware.leftClawServo.setPosition(LEFT_CLAW_CLOSE);
-        } else {
-            hardware.leftClawServo.setPosition(LEFT_CLAW_OPEN);
+
+        switch (leftClawToggle) {
+            case OPEN:
+                hardware.leftClawServo.setPosition(LEFT_CLAW_OPEN);
+                break;
+            case WIDE_OPEN:
+                hardware.leftClawServo.setPosition(LEFT_CLAW_CLOSE);
+                break;
+            case FALSE:
+                hardware.leftClawServo.setPosition(LEFT_CLAW_OPEN-0.25);
+                break;
         }
 
         if (gamepad2.left_trigger > 0.25) {
             hardware.verticalServo.setPosition(hardware.verticalServo.getPosition()-0.001);
         }
+
         if (gamepad2.right_trigger > 0.25) {
             hardware.verticalServo.setPosition(hardware.verticalServo.getPosition()+0.001);
         }
     }
 
-    // obvious
+    // plaen shooty thingy
     public void airplane() {
         if (gamepad1.right_bumper) {
             hardware.planeLaunchServo.setPosition(1);
@@ -139,10 +182,13 @@ public class LiTDrive extends LinearOpMode {
         hardware.armMotor.setPower(armPower * armPivotSpeed);
     }
 
-//     airplane
-    public void drone() {
-        if (gamepad1.y) {
-            hardware.planeLaunchServo.setPosition(0);
+    // TODO: climb initial impl (UNTESTED)
+    public void climb() {
+        if (gamepad1.left_bumper) {
+            hardware.climbMotor.setPower(-1);
+        } else {
+            hardware.climbMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            hardware.climbMotor.setPower(0);
         }
     }
 
