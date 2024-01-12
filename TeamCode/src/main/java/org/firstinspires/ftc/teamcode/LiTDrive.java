@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -11,6 +13,18 @@ import com.qualcomm.robotcore.util.Range;
 @TeleOp(name = "LiT Drive Program 2022-2023", group = "Linear OpMode")
 
 public class LiTDrive extends LinearOpMode {
+
+    private PIDController controller;
+
+    public static double p = 0, i = 0, d = 0;
+    public static double f = 0;
+
+    public static int target = 0;
+
+    private final double tickes_in_degree = 700 / 180.0;
+
+    private DcMotorEx arm_motor;
+
     enum ClawToggleTriState {
         FALSE,
         OPEN,
@@ -177,9 +191,17 @@ public class LiTDrive extends LinearOpMode {
 
     // control arm's circular motion
     public void armPivot() {
-        double armPivotSpeed = 0.85;
-        double armPower = gamepad2.left_stick_y;
-        hardware.armMotor.setPower(armPower * armPivotSpeed);
+        //double armPivotSpeed = 0.85;
+        //double armPower = gamepad2.left_stick_y;
+        controller.setPID(p, i, d);
+        int armPos = arm_motor.getCurrentPosition();
+        double pid = controller.calculate(armPos, target);
+        double ff = Math.cos(Math.toRadians(target / tickes_in_degree)) * f;
+
+        double power = pid + ff;
+
+        arm_motor.setPower(power);
+        //hardware.armMotor.setPower(armPower * armPivotSpeed);
     }
 
     // TODO: climb initial impl (UNTESTED)
@@ -194,11 +216,12 @@ public class LiTDrive extends LinearOpMode {
 
         // bring the robot down by extending slowly
         if (!gamepad1.dpad_up && gamepad1.dpad_down) {
-            hardware.climbMotor.setPower(0.3);
+            hardware.climbMotor.setPower(1);
             sleep(3000); // TODO: Test if this timing is enough
             hardware.climbMotor.setPower(0);
         }
     }
+
 
     // drive code
     public void drive() {

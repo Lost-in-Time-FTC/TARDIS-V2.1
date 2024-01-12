@@ -69,7 +69,7 @@ public class PropBlobAutonomousImplRed extends PropBlobAutonomousABC {
             trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
             setAllWheelMotorPower(0);
             // rotate claw upwards to place onto board
-            hardware.verticalServo.setPosition(0.275);
+            hardware.verticalServo.setPosition(0.50);
             sleep(1000);
             // move forward to be infront of the board
             setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -80,7 +80,7 @@ public class PropBlobAutonomousImplRed extends PropBlobAutonomousABC {
             setAllWheelMotorPower(0);
             // strafe left to place on leftside of board
             setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            strafeLeft(700);
+            strafeLeft(625);
             setAllWheelMotorPower(0.25);
             setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
             trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
@@ -129,7 +129,7 @@ public class PropBlobAutonomousImplRed extends PropBlobAutonomousABC {
             trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
             setAllWheelMotorPower(0);
             // rotate claw upwards to place onto board
-            hardware.verticalServo.setPosition(0.275);
+            hardware.verticalServo.setPosition(0.50);
             sleep(1000);
             // move forward to be infront of the board
             setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -156,11 +156,11 @@ public class PropBlobAutonomousImplRed extends PropBlobAutonomousABC {
             hardware.rightClawServo.setPosition(RIGHT_CLAW_CLOSE);
             hardware.leftClawServo.setPosition(LEFT_CLAW_CLOSE);
             // rotate claw down for more accuracy
-            hardware.verticalServo.setPosition(0.725);
+            hardware.verticalServo.setPosition(0.500);
             // move forward
             setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            setAllWheelMotorTargetPosition(1000);
-            setAllWheelMotorPower(0.6);
+            setAllWheelMotorTargetPosition(850);
+            setAllWheelMotorPower(.6);
             setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
             trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
             setAllWheelMotorPower(0);
@@ -189,7 +189,7 @@ public class PropBlobAutonomousImplRed extends PropBlobAutonomousABC {
             trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
             setAllWheelMotorPower(0);
             // rotate claw upwards to place onto board
-            hardware.verticalServo.setPosition(0.275);
+            hardware.verticalServo.setPosition(0.50);
             sleep(1000);
             // move forward
             setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
