@@ -36,15 +36,15 @@ public class PIDF_Slides extends OpMode {
     @Override
     public void loop() {
         slidecontroller.setPID(p1, i1, d1);
-        int armPos = slide_motor.getCurrentPosition();
-        double pid = slidecontroller.calculate(armPos, target2);
+        int slidePos = slide_motor.getCurrentPosition();
+        double pid = slidecontroller.calculate(slidePos, target2);
         double ff = Math.cos(Math.toRadians(target2 / tickes_in_degree)) * f1;
 
         double power = pid + ff;
 
         slide_motor.setPower(power);
 
-        telemetry.addData("pos", armPos);
+        telemetry.addData("pos", slidePos);
         telemetry.addData("target", target2);
         telemetry.update();
     }

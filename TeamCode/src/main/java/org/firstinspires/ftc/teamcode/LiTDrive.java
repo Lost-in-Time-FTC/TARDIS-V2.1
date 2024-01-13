@@ -28,8 +28,6 @@ public class LiTDrive extends LinearOpMode {
 
     public static int target2 = 0;
 
-    private DcMotorEx slide_motor;
-
     private final double tickes_in_degree = 700 / 180.0;
 
     enum ClawToggleTriState {
@@ -64,12 +62,11 @@ public class LiTDrive extends LinearOpMode {
         hardware.elevatorMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         hardware.armMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         hardware.elevatorMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        int position = hardware.elevatorMotor.getCurrentPosition();
-        hardware.armMotor.getCurrentPosition();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+
 
         // Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -80,6 +77,13 @@ public class LiTDrive extends LinearOpMode {
             armPivot();
             airplane();
             climb();
+            telemetry.addData("slide", hardware.elevatorMotor.getCurrentPosition());
+            telemetry.update();
+
+            telemetry.addData("arm", hardware.armMotor.getCurrentPosition());
+            telemetry.addData("armtarget", target);
+            telemetry.addData("slidetarget", target2);
+
         }
     }
 
@@ -206,7 +210,13 @@ public class LiTDrive extends LinearOpMode {
 
 
         if (gamepad2.y) {
-            target2 = 200;
+            target2 = 1000;
+
+            if (gamepad2.b) {
+                target2 = 0;
+            }
+
+
         }
 
 
@@ -231,7 +241,14 @@ public class LiTDrive extends LinearOpMode {
             target = hardware.armMotor.getCurrentPosition();}
 
         if (gamepad2.y) {
-            target = 200;
+            target = -600;
+
+            if (gamepad2.b) {
+                target2 = 200;
+            }
+
+
+
         }
 
 
