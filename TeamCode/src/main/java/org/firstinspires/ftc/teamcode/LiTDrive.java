@@ -16,14 +16,21 @@ public class LiTDrive extends LinearOpMode {
 
     private PIDController controller;
 
-    public static double p = 0, i = 0, d = 0;
+    public static double p = -0.007, i = 0, d = 0;
     public static double f = 0;
 
     public static int target = 0;
 
-    private final double tickes_in_degree = 700 / 180.0;
+    private PIDController slidecontroller;
 
-    private DcMotorEx arm_motor;
+    public static double p1 = -0.006, i1 = 0, d1 = 0;
+    public static double f1 = 0;
+
+    public static int target2 = 0;
+
+    private DcMotorEx slide_motor;
+
+    private final double tickes_in_degree = 700 / 180.0;
 
     enum ClawToggleTriState {
         FALSE,
@@ -49,6 +56,16 @@ public class LiTDrive extends LinearOpMode {
         hardware.frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
         hardware.armMotor.setDirection(DcMotor.Direction.FORWARD);
         hardware.elevatorMotor.setDirection(DcMotor.Direction.FORWARD);
+
+        controller = new PIDController(p, i, d);
+        slidecontroller = new PIDController(p1, i1, d1);
+
+        hardware.armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.elevatorMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.armMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        hardware.elevatorMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        int position = hardware.elevatorMotor.getCurrentPosition();
+        hardware.armMotor.getCurrentPosition();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -170,39 +187,57 @@ public class LiTDrive extends LinearOpMode {
         }
     }
 
+
+
     // control arm extension
     public void elevator() {
-        // down
-        if (gamepad2.right_stick_y > 0.25) {
-            hardware.elevatorMotor.setPower(-0.45);
+
+        slidecontroller.setPID(p1, i1, d1);
+        int armPos = hardware.elevatorMotor.getCurrentPosition();
+        double pid = slidecontroller.calculate(armPos, target2);
+        double ff = Math.cos(Math.toRadians(target2 / tickes_in_degree)) * f;
+
+        if (Math.abs(gamepad2.right_stick_y) < .1)
+        { double power = pid + ff;
+            hardware.elevatorMotor.setPower(power); }
+
+        else {hardware.elevatorMotor.setPower(gamepad2.right_stick_y);
+            target2 = hardware.elevatorMotor.getCurrentPosition();}
+
+
+        if (gamepad2.y) {
+            target2 = 200;
         }
 
-        // up
-        else if (gamepad2.right_stick_y < -0.25) {
-            hardware.elevatorMotor.setPower(0.45);
-        }
 
-        // hold position if there is no input
-        else {
-            hardware.elevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            hardware.elevatorMotor.setPower(0);
-        }
     }
+
+
 
     // control arm's circular motion
     public void armPivot() {
         //double armPivotSpeed = 0.85;
         //double armPower = gamepad2.left_stick_y;
         controller.setPID(p, i, d);
-        int armPos = arm_motor.getCurrentPosition();
+        int armPos = hardware.armMotor.getCurrentPosition();
         double pid = controller.calculate(armPos, target);
         double ff = Math.cos(Math.toRadians(target / tickes_in_degree)) * f;
 
-        double power = pid + ff;
+        if (Math.abs(gamepad2.left_stick_y) < .1)
+        { double power = pid + ff;
+            hardware.armMotor.setPower(power); }
 
-        arm_motor.setPower(power);
-        //hardware.armMotor.setPower(armPower * armPivotSpeed);
+        else {hardware.armMotor.setPower(gamepad2.left_stick_y);
+            target = hardware.armMotor.getCurrentPosition();}
+
+        if (gamepad2.y) {
+            target = 200;
+        }
+
+
     }
+
+
 
     // TODO: climb initial impl (UNTESTED)
     public void climb() {
