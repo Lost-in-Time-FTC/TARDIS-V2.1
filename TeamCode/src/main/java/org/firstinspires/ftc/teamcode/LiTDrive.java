@@ -174,11 +174,11 @@ public class LiTDrive extends LinearOpMode {
         }
 
         if (gamepad2.left_trigger > 0.25) {
-            hardware.verticalServo.setPosition(hardware.verticalServo.getPosition()-0.001);
+            hardware.verticalServo.setPosition(hardware.verticalServo.getPosition()-0.01);
         }
 
         if (gamepad2.right_trigger > 0.25) {
-            hardware.verticalServo.setPosition(hardware.verticalServo.getPosition()+0.001);
+            hardware.verticalServo.setPosition(hardware.verticalServo.getPosition()+0.01);
         }
     }
 
@@ -208,15 +208,22 @@ public class LiTDrive extends LinearOpMode {
         else {hardware.elevatorMotor.setPower(gamepad2.right_stick_y);
             target2 = hardware.elevatorMotor.getCurrentPosition();}
 
+        final double LEFT_CLAW_OPEN = 1;
+        final double LEFT_CLAW_CLOSE = 0;
+        final double RIGHT_CLAW_OPEN = 0;
+        final double RIGHT_CLAW_CLOSE = 1;
 
         if (gamepad2.y) {
             target2 = 1000;
+            switch (leftClawToggle) {
+                case OPEN:
+                    leftClawToggle = ClawToggleTriState.WIDE_OPEN;}
+            hardware.verticalServo.setPosition(.65);
 
-            if (gamepad2.b) {
-                target2 = 0;
-            }
+        }
 
-
+        if (gamepad2.b) {
+            target2 = 0;
         }
 
 
@@ -242,12 +249,13 @@ public class LiTDrive extends LinearOpMode {
 
         if (gamepad2.y) {
             target = -600;
+            switch (rightClawToggle) {
+                case OPEN:
+                    rightClawToggle = ClawToggleTriState.WIDE_OPEN;}
+        }
 
-            if (gamepad2.b) {
-                target2 = 200;
-            }
-
-
+        if (gamepad2.b) {
+            target = 300;
 
         }
 

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
@@ -97,6 +99,31 @@ public abstract class PropBlobAutonomousABC extends LinearOpMode {
         hardware.backRightMotor.setTargetPosition(targetPosition);
         hardware.frontLeftMotor.setTargetPosition(-targetPosition);
         hardware.backLeftMotor.setTargetPosition(-targetPosition);
+    }
+
+    public final void rotateLeft_(MotorGroup leftWheels, MotorGroup rightWheels, int targetPosition) {
+        leftWheels.setRunMode(Motor.RunMode.PositionControl);
+        leftWheels.setPositionCoefficient(0.05);
+        double kPLeftWheels = leftWheels.getPositionCoefficient();
+        leftWheels.setTargetPosition(-targetPosition);      // an integer representing
+        leftWheels.set(0);
+        leftWheels.setPositionTolerance(13.6);   // allowed maximum error
+        while (!leftWheels.atTargetPosition()) {
+            leftWheels.set(0.75);
+        }
+
+        rightWheels.setRunMode(Motor.RunMode.PositionControl);
+        rightWheels.setPositionCoefficient(0.05);
+        double kPRightWheels = rightWheels.getPositionCoefficient();
+        rightWheels.setTargetPosition(targetPosition);      // an integer representing
+        rightWheels.set(0);
+        rightWheels.setPositionTolerance(13.6);   // allowed maximum error
+        while (!rightWheels.atTargetPosition()) {
+            rightWheels.set(0.75);
+        }
+
+        leftWheels.stopMotor(); // stop the motor
+        rightWheels.stopMotor(); // stop the motor
     }
 
     public final void setAllWheelMotorPower(double power) {
