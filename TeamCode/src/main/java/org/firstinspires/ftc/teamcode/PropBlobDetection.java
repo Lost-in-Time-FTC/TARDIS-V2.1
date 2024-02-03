@@ -22,7 +22,7 @@ public class PropBlobDetection extends OpenCvPipeline {
     */
 
     // Dimensions of the camera image
-    private final int width = 320;
+    private final int width = 544;
 
     // Color definitions
     private final Scalar
@@ -49,27 +49,38 @@ public class PropBlobDetection extends OpenCvPipeline {
         }
     }
 
+    Mat mat = new Mat();
+    Mat thresh = new Mat();
+    Mat edges = new Mat();
+    Mat hierarchy = new Mat();
+
+
+
     @Override
     public Mat processFrame(Mat input) {
+        // DETECTING COLOR THROUGH A THRESHOLD, HSV because RGB is less reliable with lighting changes
         // Make a working copy of the input matrix in HSV
-        Mat mat = new Mat();
+//        Mat mat = new Mat();
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
         // Threshold the image to get only red values
         // TODO: Tune the HSV values (red wraps around 180)
-        Mat thresh = new Mat();
+//        Mat thresh = new Mat();
         Core.inRange(mat, lowHSV, highHSV, thresh);
 
         // blur image?
         //Mat blur = new Mat();
         //Imgproc.GaussianBlur(thresh, blur, new Size(3, 3), 0, 0);
 
+        // Original used to be blob detect with connected component labelling.
+
         // Run edge detector
-        Mat edges = new Mat();
+//        Mat edges = new Mat();
         Imgproc.Canny(thresh, edges, 100, 300);
+        // CANNY EDGE DETECTOR
 
         // Find contours?
         List<MatOfPoint> contours = new ArrayList<>();
-        Mat hierarchy = new Mat();
+//        Mat hierarchy = new Mat();
         Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
         MatOfPoint2f[] contoursPoly  = new MatOfPoint2f[contours.size()];
@@ -79,6 +90,8 @@ public class PropBlobDetection extends OpenCvPipeline {
             Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(i).toArray()), contoursPoly[i], 3, true);
             boundRect[i] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
         }
+
+        // Edges are polygons, largest one is assumed to be the prop
 
         // bounding boxes
         double maxArea = 0;

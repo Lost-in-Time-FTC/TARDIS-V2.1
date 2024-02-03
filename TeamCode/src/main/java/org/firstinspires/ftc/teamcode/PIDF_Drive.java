@@ -13,10 +13,10 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 public class PIDF_Drive extends OpMode {
     private PIDController controller;
 
-    public static double p = 0, i = 0, d = 0;
-    public static double f = 0;
+    public static double p3 = 0, i3 = 0, d3 = 0;
+    public static double f3 = 0;
 
-    public static int target = 0;
+    public static int target3 = 0;
 
     private final double tickes_in_degree = 700 / 180.0;
 
@@ -24,7 +24,7 @@ public class PIDF_Drive extends OpMode {
 
     @Override
     public void init() {
-        controller = new PIDController(p, i, d);
+        controller = new PIDController(p3, i3, d3);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         front_right_motor = hardwareMap.get(DcMotorEx.class, "frontRightMotor");
@@ -35,17 +35,17 @@ public class PIDF_Drive extends OpMode {
 
     @Override
     public void loop() {
-        controller.setPID(p, i, d);
+        controller.setPID(p3, i3, d3);
         int frontRightMotorPos = front_right_motor.getCurrentPosition();
-        double pid = controller.calculate(frontRightMotorPos, target);
-        double ff = Math.cos(Math.toRadians(target / tickes_in_degree)) * f;
+        double pid = controller.calculate(frontRightMotorPos, target3);
+        double ff = Math.cos(Math.toRadians(target3 / tickes_in_degree)) * f3;
 
         double power = pid + ff;
 
         front_right_motor.setPower(power);
 
         telemetry.addData("fr pos", frontRightMotorPos);
-        telemetry.addData("target", target);
+        telemetry.addData("target", target3);
         telemetry.update();
     }
 }

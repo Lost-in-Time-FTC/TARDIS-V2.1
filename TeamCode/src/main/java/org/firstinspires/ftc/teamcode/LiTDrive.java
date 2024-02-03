@@ -23,8 +23,8 @@ public class LiTDrive extends LinearOpMode {
 
     private PIDController slidecontroller;
 
-    public static double p1 = -0.006, i1 = 0, d1 = 0;
-    public static double f1 = 0;
+    public static double p2 = 0.006, i2 = 0, d2 = 0;
+    public static double f2 = 0;
 
     public static int target2 = 0;
 
@@ -56,7 +56,7 @@ public class LiTDrive extends LinearOpMode {
         hardware.elevatorMotor.setDirection(DcMotor.Direction.FORWARD);
 
         controller = new PIDController(p, i, d);
-        slidecontroller = new PIDController(p1, i1, d1);
+        slidecontroller = new PIDController(p2, i2, d2);
 
         hardware.armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         hardware.elevatorMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -76,7 +76,7 @@ public class LiTDrive extends LinearOpMode {
             elevator();
             armPivot();
             airplane();
-            climb();
+//            climb();
             telemetry.addData("slide", hardware.elevatorMotor.getCurrentPosition());
             telemetry.update();
 
@@ -135,7 +135,6 @@ public class LiTDrive extends LinearOpMode {
 
     // control everything on the claw: pincers + flipping
     public void claw() {
-
         // variables for fun
         final double LEFT_CLAW_OPEN = 1;
         final double LEFT_CLAW_CLOSE = 0;
@@ -173,11 +172,11 @@ public class LiTDrive extends LinearOpMode {
                 break;
         }
 
-        if (gamepad2.left_trigger > 0.25) {
+        if (gamepad2.left_trigger > 0.75) {
             hardware.verticalServo.setPosition(hardware.verticalServo.getPosition()-0.01);
         }
 
-        if (gamepad2.right_trigger > 0.25) {
+        if (gamepad2.right_trigger > 0.75) {
             hardware.verticalServo.setPosition(hardware.verticalServo.getPosition()+0.01);
         }
     }
@@ -191,22 +190,20 @@ public class LiTDrive extends LinearOpMode {
         }
     }
 
-
-
     // control arm extension
     public void elevator() {
-
-        slidecontroller.setPID(p1, i1, d1);
+        slidecontroller.setPID(p2, i2, d2);
         int armPos = hardware.elevatorMotor.getCurrentPosition();
         double pid = slidecontroller.calculate(armPos, target2);
         double ff = Math.cos(Math.toRadians(target2 / tickes_in_degree)) * f;
 
-        if (Math.abs(gamepad2.right_stick_y) < .1)
-        { double power = pid + ff;
-            hardware.elevatorMotor.setPower(power); }
-
-        else {hardware.elevatorMotor.setPower(gamepad2.right_stick_y);
-            target2 = hardware.elevatorMotor.getCurrentPosition();}
+        if (Math.abs(gamepad2.right_stick_y) < .1) {
+            double power = pid + ff;
+            hardware.elevatorMotor.setPower(power);
+        } else {
+            hardware.elevatorMotor.setPower(-gamepad2.right_stick_y);
+            target2 = hardware.elevatorMotor.getCurrentPosition();
+        }
 
         final double LEFT_CLAW_OPEN = 1;
         final double LEFT_CLAW_CLOSE = 0;
@@ -218,7 +215,7 @@ public class LiTDrive extends LinearOpMode {
             switch (leftClawToggle) {
                 case OPEN:
                     leftClawToggle = ClawToggleTriState.WIDE_OPEN;}
-            hardware.verticalServo.setPosition(.65);
+            hardware.verticalServo.setPosition(.45);
 
         }
 
@@ -228,8 +225,6 @@ public class LiTDrive extends LinearOpMode {
 
 
     }
-
-
 
     // control arm's circular motion
     public void armPivot() {
@@ -248,40 +243,34 @@ public class LiTDrive extends LinearOpMode {
             target = hardware.armMotor.getCurrentPosition();}
 
         if (gamepad2.y) {
-            target = -600;
-            switch (rightClawToggle) {
-                case OPEN:
-                    rightClawToggle = ClawToggleTriState.WIDE_OPEN;}
+            target = -550;
         }
 
         if (gamepad2.b) {
             target = 300;
 
         }
-
-
     }
 
 
 
     // TODO: climb initial impl (UNTESTED)
-    public void climb() {
-        if (gamepad1.dpad_up) {
-            hardware.climbMotor.setPower(-1); // retract to climb quickly while dpad up is held
-        } else {
-            // brake and stay suspended in the air when dpad up is released
-            hardware.climbMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            hardware.climbMotor.setPower(0); // TODO: Tweak depending if ZeroPowerBehavior.BRAKE actually works or not
-        }
-
-        // bring the robot down by extending slowly
-        if (!gamepad1.dpad_up && gamepad1.dpad_down) {
-            hardware.climbMotor.setPower(1);
-            sleep(3000); // TODO: Test if this timing is enough
-            hardware.climbMotor.setPower(0);
-        }
-    }
-
+//    public void climb() {
+//        if (gamepad1.dpad_up == true) {
+//            hardware.climbMotor.setPower(-1); // retract to climb quickly while dpad up is held
+//        } else if (gamepad1.dpad_up == false) {
+//            // brake and stay suspended in the air when dpad up is released
+//            hardware.climbMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            hardware.climbMotor.setPower(0); // TODO: Tweak depending if ZeroPowerBehavior.BRAKE actually works or not
+//        }
+//
+//        // bring the robot down by extending slowly
+//        if (!gamepad1.dpad_up && gamepad1.dpad_down) {
+//            hardware.climbMotor.setPower(1);
+//            sleep(3000); // TODO: Test if this timing is enough
+//            hardware.climbMotor.setPower(0);
+//        }
+//    }
 
     // drive code
     public void drive() {

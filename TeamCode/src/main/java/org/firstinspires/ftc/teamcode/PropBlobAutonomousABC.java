@@ -50,7 +50,7 @@ public abstract class PropBlobAutonomousABC extends LinearOpMode {
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(544, 288, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -145,7 +145,7 @@ public abstract class PropBlobAutonomousABC extends LinearOpMode {
         hardware.backRightMotor.setTargetPosition(position);
         hardware.frontLeftMotor.setTargetPosition(position);
         hardware.backLeftMotor.setTargetPosition(position);
-//        setAllWheelMotorTargetPositionTolerance(30);
+        setAllWheelMotorTargetPositionTolerance(15);
     }
 
     public final void setAllWheelMotorTargetPositionTolerance(int tolerance) {
